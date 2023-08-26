@@ -18,6 +18,9 @@ dependencies:
       - pylint 
       - tensorflow_datasets
       - gradio
+      - typing-extensions==4.5
+      - pydantic==1.9
+      - pydantic-core==0.42.0
 
 # conda env create -f environment.yaml
       

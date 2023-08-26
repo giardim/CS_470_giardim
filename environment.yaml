@@ -17,6 +17,7 @@ dependencies:
       - matplotlib 
       - pylint 
       - tensorflow_datasets
+      - gradio
 
 # conda env create -f environment.yaml
       

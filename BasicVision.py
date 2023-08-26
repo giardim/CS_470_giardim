@@ -58,8 +58,14 @@ def main():
         # Webcam
         print("Opening webcam...")
 
-        camera = cv2.VideoCapture(0, cv2.CAP_DSHOW) # CAP_DSHOW recommended on Windows
-
+        # Linux/Mac (or native Windows) with direct webcam connection
+        #camera = cv2.VideoCapture(0, cv2.CAP_DSHOW) # CAP_DSHOW recommended on Windows 
+        # WSL: Use Yawcam to stream webcam on webserver
+        # https://www.yawcam.com/download.php
+        # Get local IP address and replace
+        IP_ADDRESS = "192.168.0.7"    
+        camera = cv2.VideoCapture("http://" + IP_ADDRESS + ":8081/video.mjpg")
+        
         # Did we get it?
         if not camera.isOpened():
             print("ERROR: Cannot open camera!")
@@ -74,7 +80,7 @@ def main():
         while key == -1:
             # Get next frame from camera
             _, frame = camera.read()
-
+            
             # Show the image
             cv2.imshow(windowName, frame)
 

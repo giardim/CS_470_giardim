@@ -1,0 +1,22 @@
+name: CV
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9
+  - pip=23.2.1
+  - cudatoolkit=11.8.0
+  - pip:
+      - nvidia-cudnn-cu11==8.6.0.163  
+      - tensorflow==2.13.*
+      - opencv-python
+      - pillow 
+      - pandas 
+      - scikit-learn 
+      - scikit-image 
+      - matplotlib 
+      - pylint 
+      - tensorflow_datasets
+
+# conda env create -f environment.yaml
+      

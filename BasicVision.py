@@ -20,12 +20,12 @@
 # IMPORTS
 ###############################################################################
 
+import sys
 import numpy as np
-import tensorflow as tf 
+import tensorflow as tf
 import cv2
 import pandas
 import sklearn
-import sys
 
 ###############################################################################
 # MAIN
@@ -39,8 +39,8 @@ def main():
     a = tf.constant("Hello Tensorflow!")
     tf.print(a)
     print(tf.config.list_physical_devices('GPU'))
-    print(tf.reduce_sum(tf.random.normal([1000, 1000])))
-
+    print(tf.reduce_sum(tf.random.normal([1000, 1000]))) 
+    
     ###############################################################################
     # PRINT OUT VERSIONS
     ###############################################################################
@@ -50,7 +50,7 @@ def main():
     print("OpenCV:", cv2.__version__)
     print("Pandas:", pandas.__version__)
     print("Scikit-Learn:", sklearn.__version__)
-    
+        
     ###############################################################################
     # OPENCV
     ###############################################################################
@@ -58,7 +58,7 @@ def main():
         # Webcam
         print("Opening webcam...")
 
-        camera = cv2.VideoCapture(1, cv2.CAP_DSHOW) # CAP_DSHOW recommended on Windows
+        camera = cv2.VideoCapture(0, cv2.CAP_DSHOW) # CAP_DSHOW recommended on Windows
 
         # Did we get it?
         if not camera.isOpened():
@@ -73,7 +73,7 @@ def main():
         key = -1
         while key == -1:
             # Get next frame from camera
-            ret, frame = camera.read()
+            _, frame = camera.read()
 
             # Show the image
             cv2.imshow(windowName, frame)

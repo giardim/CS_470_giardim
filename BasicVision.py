@@ -59,12 +59,12 @@ def main():
         print("Opening webcam...")
 
         # Linux/Mac (or native Windows) with direct webcam connection
-        #camera = cv2.VideoCapture(0, cv2.CAP_DSHOW) # CAP_DSHOW recommended on Windows 
+        camera = cv2.VideoCapture(0, cv2.CAP_DSHOW) # CAP_DSHOW recommended on Windows 
         # WSL: Use Yawcam to stream webcam on webserver
         # https://www.yawcam.com/download.php
         # Get local IP address and replace
-        IP_ADDRESS = "192.168.0.7"    
-        camera = cv2.VideoCapture("http://" + IP_ADDRESS + ":8081/video.mjpg")
+        #IP_ADDRESS = "192.168.0.7"    
+        #camera = cv2.VideoCapture("http://" + IP_ADDRESS + ":8081/video.mjpg")
         
         # Did we get it?
         if not camera.isOpened():

@@ -1,7 +1,8 @@
 
 \.vscode/
+\.venv/
 *.pyc
 __pycache__/
 ground/
 input/
-Pipefile.lock
+Pipfile.lock

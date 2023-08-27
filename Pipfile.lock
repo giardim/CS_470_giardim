@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b4a1a4af52dcd3a5affd50c7c5fdb269b377dc638b2038ab3ad899084fbb5f57"
+            "sha256": "ce355564a6208f9360dd0d68e11766392864383dcb2ec87eed822e7b7e9fc531"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -140,6 +140,51 @@
             "index": "pip_conf_index_global",
             "markers": "python_version >= '3'",
             "version": "==8.9.4.25"
+        },
+        "nvidia-cufft-cu11": {
+            "hashes": [
+                "sha256:222f9da70c80384632fd6035e4c3f16762d64ea7a843829cb278f98b3cb7dd81",
+                "sha256:c4d316f17c745ec9c728e30409612eaf77a8404c3733cdf6c9c1569634d1ca03"
+            ],
+            "index": "pip_conf_index_global",
+            "markers": "python_version >= '3'",
+            "version": "==10.9.0.58"
+        },
+        "nvidia-curand-cu11": {
+            "hashes": [
+                "sha256:8fa8365065fc3e3760d7437b08f164a6bcf8f7124f3b544d2463ded01e6bdc70",
+                "sha256:ac439548c88580269a1eb6aeb602a5aed32f0dbb20809a31d9ed7d01d77f6bf5"
+            ],
+            "index": "pip_conf_index_global",
+            "markers": "python_version >= '3'",
+            "version": "==10.3.0.86"
+        },
+        "nvidia-cusolver-cu11": {
+            "hashes": [
+                "sha256:7efe43b113495a64e2cf9a0b4365bd53b0a82afb2e2cf91e9f993c9ef5e69ee8",
+                "sha256:ca538f545645b7e6629140786d3127fe067b3d5a085bd794cde5bfe877c8926f"
+            ],
+            "index": "pip_conf_index_global",
+            "markers": "python_version >= '3'",
+            "version": "==11.4.1.48"
+        },
+        "nvidia-cusparse-cu11": {
+            "hashes": [
+                "sha256:4ae709fe78d3f23f60acaba8c54b8ad556cf16ca486e0cc1aa92dca7555d2d2b",
+                "sha256:a0f6ee81cd91be606fc2f55992d06b09cd4e86d74b6ae5e8dd1631cf7f5a8706"
+            ],
+            "index": "pip_conf_index_global",
+            "markers": "python_version >= '3'",
+            "version": "==11.7.5.86"
+        },
+        "pynvml": {
+            "hashes": [
+                "sha256:5cce014ac01b098d08f06178f86c37be409b80b2e903a5a03ce15eed60f55e25",
+                "sha256:d027b21b95b1088b9fc278117f9f61b7c67f8e33a787e9f83f735f0f71ac32d0"
+            ],
+            "index": "pip_conf_index_global",
+            "markers": "python_version >= '3.6'",
+            "version": "==11.5.0"
         }
     },
     "develop": {}

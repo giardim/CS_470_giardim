@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pip_conf_index_global"
+
+[[source]]
+url = "https://pypi.ngc.nvidia.com"
+verify_ssl = true
+name = "nvidia"
+
+[packages]
+cuda-python = "*"
+nvidia-cuda-runtime-cu11 = "==11.8.89"
+nvidia-cudnn-cu11 = "==8.9.4.25"
+
+[dev-packages]
+
+[requires]
+python_version = "3.11"

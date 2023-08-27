@@ -38,8 +38,8 @@ def main():
 
     a = tf.constant("Hello Tensorflow!")
     tf.print(a)
-    print(tf.config.list_physical_devices('GPU'))
-    print(tf.reduce_sum(tf.random.normal([1000, 1000]))) 
+    print(tf.config.list_physical_devices('GPU'))           # Should list GPU devices
+    print(tf.reduce_sum(tf.random.normal([1000, 1000])))    # Should print number tensor
     
     ###############################################################################
     # PRINT OUT VERSIONS

@@ -18,6 +18,18 @@ nvidia-cusolver-cu11 = "*"
 nvidia-cusparse-cu11 = "*"
 pynvml = "*"
 tensorflow = "<2.11"
+opencv-python = "*"
+pillow = "*"
+pandas = "*"
+scikit-learn = "*"
+scikit-image = "*"
+matplotlib = "*"
+pylint = "*"
+tensorflow-datasets = "*"
+gradio = "*"
+typing-extensions = "==4.5"
+pydantic = "==1.9"
+pydantic-core = "==0.42.0"
 
 [dev-packages]
 

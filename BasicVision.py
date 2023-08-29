@@ -22,11 +22,11 @@
 
 import sys
 import numpy as np
+import torch
 import tensorflow as tf
 import cv2
 import pandas
 import sklearn
-import torch
 
 ###############################################################################
 # MAIN

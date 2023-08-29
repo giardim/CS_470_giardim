@@ -35,9 +35,9 @@ gradio = "*"
 typing-extensions = "==4.5"
 pydantic = "==1.9"
 pydantic-core = "==0.42.0"
-torch = "*"
-torchvision = "*"
-torchaudio = "*"
+torch = {version = "*", index = "torch"}
+torchvision = {version = "*", index = "torch"}
+torchaudio = {version = "*", index = "torch"}
 
 [dev-packages]
 

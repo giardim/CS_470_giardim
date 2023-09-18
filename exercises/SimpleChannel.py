@@ -7,12 +7,11 @@ import numpy as np
 import sys
 
 def main():
-    input_node = Input(shape=(None, None, None, 3))
+    input_node = Input(shape=(None, None, 3))
     filter_layer = Dense(1, use_bias=False)
     output_node = filter_layer(input_node)
     model = Model(inputs=input_node, outputs=output_node)
     model.compile(optimizer="adam", loss="mse", metrics=["mse"])
-    
     camera = cv2.VideoCapture(0, cv2.CAP_DSHOW)
     if not camera.isOpened():
             print("ERROR: Cannot open camera!")

@@ -104,7 +104,7 @@ def main():
         windowName = "Webcam"
         cv2.namedWindow(windowName)
         
-        filterSize = 21
+        filterSize = 5
         filterType = FilterType.MEDIAN
 
         # While not closed...

@@ -27,14 +27,21 @@ import tensorflow as tf
 import cv2
 import pandas
 import sklearn
+import math as m
 from enum import Enum
 
 class FilterType(Enum):
     BOX = 0
     GAUSS = 1
     MEDIAN = 2
+    LAPLACE = 3
+    LAPLACE_SHARP = 4
+    SOBEL_X= 5
+    SOBEL_Y = 6
+    GRAD_MAG = 7
+    CUSTOM = 8
 
-def filter(image, filterSize, filterType):
+def filter(image, filterSize, filterType, kernel=None):
     # output = np.copy(image)
     
     if filterType == filterType.BOX:
@@ -43,6 +50,31 @@ def filter(image, filterSize, filterType):
         output = cv2.GaussianBlur(image, (filterSize, 1), 0)
     elif filterType == filterType.MEDIAN:
         output = cv2.medianBlur(image, filterSize)
+    elif filterType == filterType.LAPLACE:
+        laplace = cv2.Laplacian(image, cv2.CV_32F, ksize=filterSize, scale=0.25)
+        output = cv2.convertScaleAbs(laplace, alpha=0.5, beta=127.0)
+    elif filterType == filterType.LAPLACE_SHARP:
+        laplace = cv2.Laplacian(image, cv2.CV_32F, ksize=filterSize, scale=0.25)
+        fimage = image.astype("float32")
+        fimage -= laplace
+        output = cv2.convertScaleAbs(fimage)
+    elif filterType == filterType.SOBEL_X:
+        sx = cv2.Sobel(image, cv2.CV_32F, 1, 0, ksize=filterSize, scale=0.25)
+        output = cv2.convertScaleAbs(sx, alpha=0.5, beta=127.0)
+    elif filterType == filterType.SOBEL_Y:
+        sy = cv2.Sobel(image, cv2.CV_32F, 0, 1, ksize=filterSize, scale=0.25)
+        output = cv2.convertScaleAbs(sy, alpha=0.5, beta=127.0)
+    elif filterType == filterType.GRAD_MAG:
+        sx = cv2.Sobel(image, cv2.CV_32F, 1, 0, ksize=filterSize, scale=0.25)
+        sy = cv2.Sobel(image, cv2.CV_32F, 0, 1, ksize=filterSize, scale=0.25)
+        grad_image = np.absolute(sx) + np.absolute(sy)
+        output = cv2.convertScaleAbs(grad_image)
+    elif filterType == filterType.CUSTOM:
+        if kernel is None:
+            raise ValueError("Cannot use custom filter with None!")
+        displayScale = np.sum(np.absolute(kernel))
+        result = cv2.filter2D(image, cv2.CV_32F, kernel)
+        output = cv2.convertScaleAbs(result, alpha=(1.0/displayScale), beta=127.0)
     else:
         output = np.copy(image)
     return output
@@ -104,8 +136,14 @@ def main():
         windowName = "Webcam"
         cv2.namedWindow(windowName)
         
-        filterSize = 5
-        filterType = FilterType.MEDIAN
+        filterSize = 27
+        filterType = FilterType.CUSTOM
+        
+        kernel = np.zeros((filterSize, filterSize))
+        scale = (10*m.pi)/filterSize
+        for i in range(filterSize):
+            kernel[:, i] = m.sin(i*scale)
+            
 
         # While not closed...
         key = -1
@@ -114,7 +152,7 @@ def main():
             _, frame = camera.read()
             
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            output = filter(gray, filterSize, filterType)
+            output = filter(gray, filterSize, filterType, kernel)
             
             # Show the image
             cv2.imshow(windowName, frame)

@@ -32,6 +32,7 @@ from enum import Enum
 class FilterType(Enum):
     BOX = 0
     GAUSS = 1
+    MEDIAN = 2
 
 def filter(image, filterSize, filterType):
     # output = np.copy(image)
@@ -39,6 +40,8 @@ def filter(image, filterSize, filterType):
         output = cv2.boxFilter(image, -1, (filterSize, filterSize))
     elif filterType == FilterType.GAUSS:
         output = cv2.GaussianBlur(image, (filterSize, 1), 0)
+    elif filterType == FilterType.MEDIAN:
+        output = cv2.medianBlur(image, filterSize)
     else:
         output = np.copy(image)
     
@@ -101,8 +104,8 @@ def main():
         windowName = "Webcam"
         cv2.namedWindow(windowName)
         
-        filterSize = 65 #301 #27 #5
-        filterType = FilterType.GAUSS # FilterType.BOX
+        filterSize = 5 #301 #27 #5
+        filterType = FilterType.MEDIAN # FilterType.BOX
 
         # While not closed...
         key = -1

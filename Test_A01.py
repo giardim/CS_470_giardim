@@ -10,7 +10,7 @@ import cv2
 import numpy as np
 import pandas as pd
 import General_Testing as GT
-import A01
+import assign01.A01 as A01
 
 base_dir = "assign01"
 image_dir = base_dir + "/" + "images"

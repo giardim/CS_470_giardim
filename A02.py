@@ -20,25 +20,33 @@ def read_kernel_file(filepath):
     
 def apply_filter(image, kernel, alpha=1.0, beta=0.0, convert_uint8=True):
     image = image.astype("float64")
-    output = np.copy(image).astype("float64")
+    output = np.zeros(shape=(image.shape[0], image.shape[1]))
     kernel = kernel.astype("float64")
+    subImage = np.copy(kernel)
+    PW = kernel.shape[1] // 2
+    PH = kernel.shape[0] // 2
     kernel = cv2.flip(kernel, -1)
-    PW = kernel.shape[0] // 2
-    PH = kernel.shape[1] // 2
-    subImage = np.copy(kernel).astype("float64")
-    paddedImage = cv2.copyMakeBorder(src=image, top=PH, bottom=PH, left=PW, right=PW, borderType=cv2.BORDER_CONSTANT, value=0)
-    for i in range(image.shape[0]):
-        for j in range(image.shape[1]):
-            subImage = paddedImage[i:(i+kernel.shape[0]), j:(j+kernel.shape[1])]
+    paddedImage = cv2.copyMakeBorder(src=image, 
+                                     top=PH, 
+                                     bottom=PH, 
+                                     left=PW, 
+                                     right=PW, 
+                                     borderType=cv2.BORDER_CONSTANT,
+                                     value=0)
+    for i in range(output.shape[0]):
+        for j in range(output.shape[1]):
+            subImage = paddedImage[i:(i+kernel.shape[0]), j:(j+kernel.shape[1])] 
+            #if (subImage.shape[0] == kernel.shape[0]):
+            #    subImage = np.transpose(subImage)
+            #elif (subImage.shape[1] == kernel.shape[1]):
+            #    kernel = np.transpose(kernel)
             filterVals = subImage * kernel
             value = np.sum(filterVals)
-            output[i, j] = value
+            output[i,j] = value
     if (convert_uint8):
         output = cv2.convertScaleAbs(output, alpha=alpha, beta=beta)
     return output
             
-    
-
 def filtering_callback(input_img, filter_file, alpha_val, beta_val):
     input_img = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
     kernel = read_kernel_file(filter_file.name)

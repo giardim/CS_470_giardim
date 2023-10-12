@@ -4,7 +4,7 @@ import numpy as np
 
 def read_kernel_file(filepath):
     index = 2
-    file = open(filepath, 'r')
+    file = open(filepath, 'r') 
     format = file.readline()
     file.close()
     format = format.split(" ")
@@ -19,23 +19,22 @@ def read_kernel_file(filepath):
     
     
 def apply_filter(image, kernel, alpha=1.0, beta=0.0, convert_uint8=True):
-    output = np.copy(image).astype("float64")
     image = image.astype("float64")
+    output = np.copy(image).astype("float64")
     kernel = kernel.astype("float64")
-    np.flip(kernel, -1)
+    kernel = cv2.flip(kernel, -1)
     PW = kernel.shape[0] // 2
     PH = kernel.shape[1] // 2
+    subImage = np.copy(kernel).astype("float64")
     paddedImage = cv2.copyMakeBorder(src=image, top=PH, bottom=PH, left=PW, right=PW, borderType=cv2.BORDER_CONSTANT, value=0)
     for i in range(image.shape[0]):
         for j in range(image.shape[1]):
-            row = i + kernel.shape[0]
-            col = j + kernel.shape[1]
-            subImage = paddedImage[row][col]
+            subImage = paddedImage[i:(i+kernel.shape[0]), j:(j+kernel.shape[1])]
             filterVals = subImage * kernel
             value = np.sum(filterVals)
-            output[row, col] = value
+            output[i, j] = value
     if (convert_uint8):
-        output = cv2.convertScaleAbs(output)
+        output = cv2.convertScaleAbs(output, alpha=alpha, beta=beta)
     return output
             
     

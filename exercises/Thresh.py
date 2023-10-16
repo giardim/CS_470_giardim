@@ -33,6 +33,7 @@ class ThreshType(Enum):
     BASIC = 0
     OTSU = 1
     COLOR = 2
+    KMEANS = 3
 
 def do_segment(image, treshType, value, center=None):
     if treshType == treshType.BASIC:
@@ -52,6 +53,19 @@ def do_segment(image, treshType, value, center=None):
         image /= np.sqrt(3)
         image = cv2.convertScaleAbs(image)
         value, output = cv2.threshold(image, value, 255, cv2.THRESH_BINARY_INV)
+    elif treshType == treshType.KMEANS:
+        image_shape = image.shape
+        image = np.reshape(image, (-1, 3)).astype("float32")
+        value, bestLabels, centers = cv2.kmeans(image, K=5, bestLabels=None, criteria=(cv2.TERM_CRITERIA_EPS + cv2.TermCriteria_MAX_ITER, 10, 1.0),
+                                                flags=cv2.KMEANS_RANDOM_CENTERS,
+                                                attempts=10)
+        print(bestLabels.shape)
+        print(centers.shape)
+        centers = np.uint8(centers)
+        output = centers[bestLabels.flatten()]
+        print(output.shape)
+        output = np.reshape(output, image_shape)
+        
         
     return value, output
 
@@ -123,7 +137,7 @@ def main():
             _, frame = camera.read()
             image = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             
-            value, output = do_segment(frame, ThreshType.COLOR, value, center)
+            value, output = do_segment(frame, ThreshType.KMEANS, value, center)
             
             # Show the image
             cv2.imshow(windowName, frame)

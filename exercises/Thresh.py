@@ -56,7 +56,8 @@ def do_segment(image, treshType, value, center=None):
     elif treshType == treshType.KMEANS:
         image_shape = image.shape
         image = np.reshape(image, (-1, 3)).astype("float32")
-        value, bestLabels, centers = cv2.kmeans(image, K=5, bestLabels=None, criteria=(cv2.TERM_CRITERIA_EPS + cv2.TermCriteria_MAX_ITER, 10, 1.0),
+        value, bestLabels, centers = cv2.kmeans(image, K=5, bestLabels=None, criteria=(cv2.TERM_CRITERIA_EPS + cv2.TermCriteria_MAX_ITER, 
+                                                                                       10, 1.0),
                                                 flags=cv2.KMEANS_RANDOM_CENTERS,
                                                 attempts=10)
         print(bestLabels.shape)

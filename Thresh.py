@@ -146,7 +146,43 @@ def do_segment(image, threshType, value, center=None):
             output[all_coords[c][0], all_coords[c][1]] = colors[c]  
             #print(output[all_coords[c][0], all_coords[c][1]])     
         print("OUTPUT SHAPE after:", orig_shape)
-    return value, output   
+    return value, output 
+
+def get_connected_image(thresh_image):
+    element = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (7,7))
+    thresh_image = cv2.morphologyEx(thresh_image, cv2.MORPH_OPEN,
+                                    element,iterations=1)
+        
+    centers = [
+            [255,0,0],
+            [0,255,0],
+            [0,0,255],
+            [255,255,0],
+            [0,255,255],
+            [255,255,255]
+        ]     
+    
+    num_components, label_image = cv2.connectedComponents(thresh_image,
+                                                          connectivity=8,
+                                                          ltype=cv2.CV_32S)
+    print("Number of connected components:", num_components)
+    
+    output = np.zeros(thresh_image.shape + (3,), dtype="uint8")
+    
+    for row in range(output.shape[0]):
+        for col in range(output.shape[1]):
+            label = label_image[row,col]
+            if label > 0:
+                label -= 1
+                label %= len(centers)
+                output[row,col] = centers[label]
+                
+    for label in range(num_components):
+        label += 1
+        coords = np.where(label_image == label)
+        print(coords)
+                
+    return output     
 
 ###############################################################################
 # MAIN
@@ -225,12 +261,18 @@ def main():
             _, red_output = do_segment(frame, ThreshType.COLOR, value,
                                        center=(0,0,128))
             '''
-            value, output = do_segment(frame, ThreshType.KMEANS_THRESH, value,
+            #value, output = do_segment(frame, ThreshType.KMEANS_THRESH, value,
+            #                           center)
+            
+            value, output = do_segment(frame, ThreshType.OTSU, value,
                                        center)
+            
+            vis_output = get_connected_image(output)
                         
             # Show the image
             cv2.imshow(windowName, frame)
             cv2.imshow("SEGMENT", output) 
+            cv2.imshow("GROUPS", vis_output)
             #cv2.imshow("RED", red_output)
             #cv2.imshow("GREEN", green_output)
             #cv2.imshow("BLUE", blue_output)          

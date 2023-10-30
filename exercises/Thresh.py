@@ -93,6 +93,37 @@ def do_segment(image, threshType, value, center=None):
         all_coords = np.concatenate([fore_coords, back_coords], axis=0)
         
     return value, output
+def get_connected_image(thresh_image):
+    element = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
+    thresh_image = cv2.morphologyEx(thresh_image, cv2.MORPH_OPEN, element, iterations=1)
+    
+    centers = [
+        [255, 0,0],
+        [0, 255, 0],
+        [0, 0, 255],
+        [0, 255, 255],
+        [255, 255, 0],
+        [255,255, 255]
+    ]
+    num_componets, label_image = cv2.connectedComponents(thresh_image, connectivity=8, ltype=cv2.CV_32S)
+    print("Number of connected componets: ", num_componets)
+    
+    output = np.zeros(thresh_image.shape + (3,), dtype="uint8")
+    
+    for row in range (output.shape[0]):
+        for col in range(output.shape[1]):
+            label = label_image[row,col]
+            if label > 0:
+                label -= 1
+                label %= len(centers)
+                output[row, col] = centers[label]
+                
+    for label in range(num_componets):
+        label += 1
+        coords = np.where(label_image == label)
+        print(coords)
+    return output
+            
 
 ###############################################################################
 # MAIN
@@ -162,11 +193,13 @@ def main():
             _, frame = camera.read()
             image = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             
-            value, output = do_segment(frame, ThreshType.KMEANS_THRESH, value, center)
+            value, output = do_segment(frame, ThreshType.OTSU, value, center)
+            
+            vis_output = get_connected_image(output)
             
             # Show the image
             cv2.imshow(windowName, frame)
-            cv2.imshow("SEGMENT", output)
+            cv2.imshow("SEGMENT", vis_output)
 
             # Wait 30 milliseconds, and grab any key presses
             key = cv2.waitKey(30)

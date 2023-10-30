@@ -34,15 +34,16 @@ class ThreshType(Enum):
     OTSU = 1
     COLOR = 2
     KMEANS = 3
+    KMEANS_THRESH = 4
 
-def do_segment(image, treshType, value, center=None):
-    if treshType == treshType.BASIC:
+def do_segment(image, threshType, value, center=None):
+    if threshType == threshType.BASIC:
         image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         value, output = cv2.threshold(image, value, 255, cv2.THRESH_BINARY)
-    elif treshType == treshType.OTSU:
+    elif threshType == threshType.OTSU:
         value, output = cv2.threshold(image, value, 255, cv2.THRESH_OTSU)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    elif treshType == treshType.COLOR:
+    elif threshType == threshType.COLOR:
         image = image.astype("float32")
         image = image[:,:] - center
         image = image * image
@@ -53,7 +54,7 @@ def do_segment(image, treshType, value, center=None):
         image /= np.sqrt(3)
         image = cv2.convertScaleAbs(image)
         value, output = cv2.threshold(image, value, 255, cv2.THRESH_BINARY_INV)
-    elif treshType == treshType.KMEANS:
+    elif threshType == threshType.KMEANS:
         image_shape = image.shape
         image = np.reshape(image, (-1, 3)).astype("float32")
         value, bestLabels, centers = cv2.kmeans(image, K=5, bestLabels=None, criteria=(cv2.TERM_CRITERIA_EPS + cv2.TermCriteria_MAX_ITER, 10, 1.0),
@@ -65,7 +66,30 @@ def do_segment(image, treshType, value, center=None):
         output = centers[bestLabels.flatten()]
         print(output.shape)
         output = np.reshape(output, image_shape)
+    elif threshType == threshType.KMEANS_THRESH:
+        #otsu
+        value, output = cv2.threshold(image, value, 255, cv2.THRESH_OTSU)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        #grab foreground pixels
+        foreground = np.where(output == 255)
+        background = np.where(output != 255)
         
+        def convert_to_cords(data):
+            y, x = data
+            coords = np.stack([y,x], axis=1)
+            coords = coords.astype('float32')
+            return coords
+        fore_coords = convert_to_cords(foreground)
+        back_coords = convert_to_cords(background)
+        num_groups = 5
+        value, bestLabels, centers = cv2.kmeans(fore_coords, K=num_groups, bestLabels=None, criteria=(cv2.TERM_CRITERIA_EPS + cv2.TermCriteria_MAX_ITER, 10, 1.0),
+                                                flags=cv2.KMEANS_RANDOM_CENTERS,
+                                                attempts=10)
+        back_labels = back_coords[:, 0]
+        back_labels[:] = num_groups
+        back_labels = np.reshape(back_labels, [-1, 1])
+        allLabels = np.concatenate([bestLabels, back_labels], axis=0)
+        all_coords = np.concatenate([fore_coords, back_coords], axis=0)
         
     return value, output
 
@@ -137,7 +161,7 @@ def main():
             _, frame = camera.read()
             image = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             
-            value, output = do_segment(frame, ThreshType.KMEANS, value, center)
+            value, output = do_segment(frame, ThreshType.KMEANS_THRESH, value, center)
             
             # Show the image
             cv2.imshow(windowName, frame)

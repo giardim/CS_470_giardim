@@ -4,7 +4,7 @@ import numpy as np
 
 def find_WBC(image):
     #Step 1 get superpixel groups
-    segments = skimage.segmentation.slic(image, n_segments=40, sigma=8, start_label=0)
+    segments = skimage.segmentation.slic(image, n_segments=45, sigma=10, start_label=0)
     cnt = len(np.unique(segments))
     
     #Step 2 compute mean per superpixel

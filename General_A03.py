@@ -193,9 +193,9 @@ def predict_dataset(dataset, prefix, out_dir, cell_type, find_cell_func):
         draw_bounding_boxes(image, true_bounding_boxes, (0,0,0))
         draw_bounding_boxes(image, pred_bounding_boxes, (0,255,0))
 
-        # Show images (DEBUG)                
-        #cv2.imshow("IMAGE", image)        
-        #cv2.waitKey(-1)
+        #Show images (DEBUG)                
+        # cv2.imshow("IMAGE", image)        
+        # cv2.waitKey(-1)
 
         # Save image
         cv2.imwrite(out_dir + "/%s_%03d.png" % (prefix, image_index), image)

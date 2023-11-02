@@ -10,7 +10,7 @@ out_dir = base_dir + "/" + "output_wbc"
 def main():
     # Load datasets
     train_data, test_data = load_and_prepare_BCCD_data()
-    
+     
     # Do directory exist?
     if os.path.exists(out_dir):
         check_overwrite = input("Output folder exists; do you wish to overwrite it? (y/n) ")

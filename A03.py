@@ -4,7 +4,7 @@ import numpy as np
 
 def find_WBC(image):
     #Step 1 get superpixel groups
-    segments = skimage.segmentation.slic(image, n_segments=100, sigma=5, start_label=0)
+    segments = skimage.segmentation.slic(image, n_segments=60, sigma=3, start_label=0)
     cnt = len(np.unique(segments))
     
     #Step 2 compute mean per superpixel
@@ -15,7 +15,7 @@ def find_WBC(image):
             group_means[specific_group] = cv2.mean(image, mask=mask_image)[0:3]
             
     #Step 3 Use k-means on group means colors to group them into 4 color groups
-    _, bestLabels, centers = cv2.kmeans(data=group_means, K=5, bestLabels=None, 
+    _, bestLabels, centers = cv2.kmeans(data=group_means, K=4, bestLabels=None, 
                                             criteria=(cv2.TERM_CRITERIA_EPS + cv2.TermCriteria_MAX_ITER, 10, 1.0),
                                                 flags=cv2.KMEANS_RANDOM_CENTERS,
                                                 attempts=10)
@@ -52,13 +52,14 @@ def find_WBC(image):
     retval, labels = cv2.connectedComponents(cell_mask, None, 8, cv2.CV_32S)
 
     #Step 9 For each blob group (except 0, which is the background)
+    SCALER = 20
     bounding_boxes = []
     for i in range(1, retval):
         coords = np.where(labels==i)
         if (len(coords[0]) != 0):
             ymin, xmin= np.min(coords, axis = 1)
             ymax, xmax = np.max(coords, axis = 1)
-            bounding_box = [ymin, xmin, ymax, xmax]
+            bounding_box = [ymin - SCALER, xmin - SCALER, ymax + SCALER, xmax + SCALER]
             bounding_boxes.append(bounding_box)    
     
     return bounding_boxes

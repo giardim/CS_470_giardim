@@ -37,13 +37,19 @@ def getOneLBPLabel(subimage, label_type):
 
 def getLBPImage(image, label_type):
     output = np.copy(image)
-    subImage = np.zeros(shape=(4,4))
-    for i in range (image.shape[0]):
-        for j in range (image.shape[1]):
+    image = cv2.copyMakeBorder(src=image, 
+                               top=1,
+                               right=1,
+                               left=1,
+                               bottom=1,
+                               borderType=cv2.BORDER_CONSTANT,
+                               value=0)
+    subImage = np.zeros(shape=(3,3))
+    for i in range (output.shape[0] + 1):
+        for j in range (output.shape[1] + 1):
             subImage = image[i:i+3, j:j+3]
             if (subImage.shape[0] < 3 or subImage.shape[1] < 3):
                 continue
-            output[i][j] = getOneLBPLabel(subImage, label_type="UNIFORM")
+            output[i][j] = getOneLBPLabel(subImage, label_type)
     return output
-
 

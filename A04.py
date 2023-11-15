@@ -67,14 +67,11 @@ def getLBPFeatures(featureImage, regionSideCnt, label_type):
     subWidth = featureImage.shape[1] // regionSideCnt
     subHeight = featureImage.shape[0] // regionSideCnt
     allHists = []
-    print(f"side count {regionSideCnt}")
-    for i in range(regionSideCnt):
-        print(f"i {i}")
-        subImage = featureImage[(subHeight*(i+1)) - subHeight:subHeight*(i+1),
-                                (subWidth*(i+1)) - subWidth:subWidth*(i+1)]
-        hist = getOneRegionLBPFeatures(subImage, label_type)
-        allHists.append(hist)
-    print("STOP")
+    for i in range(0, featureImage.shape[0] - 3, subHeight):
+        for j in range(0, featureImage.shape[1] - 3, subWidth):
+            subImage = featureImage[i:i+subHeight, j:j+subWidth]
+            hist = getOneRegionLBPFeatures(subImage, label_type)
+            allHists.append(hist)
     allHists = np.array(allHists)
     allHists = np.reshape(allHists, (allHists.shape[0] * allHists.shape[1]))
     return allHists

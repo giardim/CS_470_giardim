@@ -53,3 +53,13 @@ def getLBPImage(image, label_type):
             output[i][j] = getOneLBPLabel(subImage, label_type)
     return output
 
+def getOneRegionLBPFeatures(subimage, label_type):
+    hist = np.zeros(shape=(10))
+    pixels = subimage.shape[0] * subimage.shape[1]
+    for i in range (subimage.shape[0]):
+        for j in range(subimage.shape[1]):
+            value = subimage[i][j]
+            hist[value] += 1
+    hist = hist / pixels
+    print(f"hist {hist}")
+    return hist

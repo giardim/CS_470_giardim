@@ -86,9 +86,9 @@ def getLBPFeatures(featureImage, regionSideCnt, label_type):
     #Loop through the given image, create a subImage, send the subimage to the 
     #   getOneReigionLBPFeatures function and add the corresponding histogram
     #   to a list of all histograms per reigion
-    for i in range(0, featureImage.shape[0] - 3, subHeight):
-        for j in range(0, featureImage.shape[1] - 3, subWidth):
-            subImage = featureImage[i:i+subHeight, j:j+subWidth]
+    for i in range(regionSideCnt):
+        for j in range(regionSideCnt):
+            subImage = featureImage[i * subHeight:(i + 1)*subHeight, j * subWidth:(j+1)*subWidth]
             hist = getOneRegionLBPFeatures(subImage, label_type)
             allHists.append(hist)
     #concatenate and return all histograms

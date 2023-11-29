@@ -8,6 +8,69 @@ import numpy as np
 import os
 from sklearn.model_selection import train_test_split
 
+class SimpleNetwork(nn.Module):
+    def __init__(self, class_cnt):
+        super().__init__()
+        self.net_stack = nn.Sequential(
+            nn.Conv2d(3, 32, 3, padding="same"),
+            nn.ReLU(),
+            nn.Conv2d(32, 32, 3, padding="same"),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            
+            nn.Conv2d(32, 64, 3, padding="same"),
+            nn.ReLU(),
+            nn.Conv2d(64, 64, 3, padding="same"),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+
+            nn.Flatten(),
+
+            nn.Linear(4096, 32),
+            nn.ReLU(),
+            nn.Linear(32, class_cnt)
+        )
+
+        
+    def forward(self, x):
+        logits = self.net_stack(x)
+        return logits
+    
+def train_one_epoch(model, loss_fn, optimizer, device, dataloader):
+    size = len(dataloader.dataset)
+    model.train()
+    for batch, (X, y) in enumerate(dataloader):
+        X = X.to(device)
+        y = y.to(device)
+        pred = model(X)
+        loss = loss_fn(pred, y)
+        loss.backward()
+        optimizer.step()
+        optimizer.zero_grad()
+
+        if batch % 100 == 0:
+            loss = loss.item()
+            index = (batch + 1) * len(X)
+            print(f"{index} of {size}: Loss = {loss}")
+
+def test (model, loss_fn, device, dataloader, dataname):
+    size = len(dataloader.dataset)
+    num_batches = len(dataloader)
+    model.eval()
+
+    test_loss = 0
+    correct = 0
+
+    with torch.no_grad():
+        for X,y in dataloader:
+            X = X.to(device)
+            y = y.to(device)
+            pred = model(X)
+            test_loss += loss_fn(pred, y).item()
+            correct += (pred.argmax(1) == y.argmax(1)).sum().item()
+        test_loss /= num_batches
+        correct /= size
+        print(f"{dataname} \n\t Accuracy: {correct} \n\t Loss: {test_loss}")
 
 def main():
     data_transform = v2.Compose([v2.ToImageTensor(),
@@ -28,20 +91,48 @@ def main():
     test_dataloader = DataLoader(train_data, 
                                   batch_size = batch_size)
     
-    train_iter = iter(train_dataloader)
+    # train_iter = iter(train_dataloader)
 
-    for _ in range(5):
-        X,y = next(train_iter)
-        X = X[0]
-        print(X.shape, y.shape)
-        X = X.numpy()
-        X = np.transpose(X, [1, 2, 0])
-        X = cv2.cvtColor(X, cv2.COLOR_RGB2BGR)
-        X = cv2.resize(X, dsize=None, fx = 5.0, fy = 5.0)
+    # for _ in range(5):
+    #     X,y = next(train_iter)
+    #     X = X[0]
+    #     print(X.shape, y.shape)
+    #     X = X.numpy()
+    #     X = np.transpose(X, [1, 2, 0])
+    #     X = cv2.cvtColor(X, cv2.COLOR_RGB2BGR)
+    #     X = cv2.resize(X, dsize=None, fx = 5.0, fy = 5.0)
         
-        cv2.imshow("IMAGE", X)
-        cv2.waitKey(-1)
-        cv2.destroyAllWindows()
+    #     cv2.imshow("IMAGE", X)
+    #     cv2.waitKey(-1)
+    #     cv2.destroyAllWindows()
+    model = SimpleNetwork(class_cnt = 10)
+
+    device = ("cuda" if torch.cuda.is_available()
+              else "mps" if torch.backends.mps.is_available()
+              else "cpu")
+    print(f'Using {device} as device')
+
+    model = model.to(device)
+    print(model)
+
+    loss_fn = nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+
+    total_epochs = 5
+
+    for epoch in range (total_epochs):
+        print(f"***EPOCH {epoch + 1} ***")
+        train_one_epoch(model=model, loss_fn= loss_fn, optimizer= optimizer, device=device, dataloader=train_dataloader)
+        test(model, loss_fn, device, train_dataloader, "TRAIN")
+        test(model, loss_fn, device, train_dataloader, "TEST")
+
+    file_name = "mymodel.pth"
+    torch.save(model.state_dict(), file_name)
+    model2 = SimpleNetwork(class_cnt = 10).to(device)
+    model2.load_state_dict(torch.load(file_name))
+
+    test(model2, loss_fn, device, train_dataloader, "TRAIN")
+    test(model2, loss_fn, device, train_dataloader, "TEST")
 
 
 

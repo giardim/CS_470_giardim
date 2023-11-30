@@ -8,6 +8,7 @@ import numpy as np
 import os
 from sklearn.model_selection import train_test_split
 
+#Create models below
 class CNN0(nn.Module):
     def __init__(self, class_cnt):
         super().__init__()      
@@ -131,10 +132,12 @@ class CNN3(nn.Module):
         logits = self.CNN3(x)
         return logits
 
+#Returns all model names, we can pick from this list later
 def get_approach_names():
     approach_names = ["CNN0", "CNN1", "CNN2", "CNN3"]
     return approach_names
 
+#Returns the description of all layers, used in our evaluation
 def get_approach_description(approach_name):
     desc = {
         "CNN0" : "14 Layer CNN with Leaky ReLU as the activation function. Uses convolution layers to transform the data.",
@@ -145,18 +148,21 @@ def get_approach_description(approach_name):
     
     return desc[approach_name]
 
+#Data augmenation
 def get_data_transform(approach_name, training):
-    if (approach_name == "CNN0" or approach_name == "CNN3"):
+    if (not training or approach_name == "CNN0" or approach_name == "CNN3"):
         data_transform = v2.Compose([
         v2.ToImageTensor(),
         v2.ConvertDtype()
         ])
+    #Data is randomly flipped horizontally
     elif (approach_name == "CNN1"):
         data_transform = v2.Compose([
         v2.ToImageTensor(),
         v2.ConvertDtype(),
         v2.RandomHorizontalFlip()
         ])   
+    #Data is randomly flipped vertically
     elif (approach_name == "CNN2"):
         data_transform = v2.Compose([
         v2.ToImageTensor(),
@@ -166,6 +172,7 @@ def get_data_transform(approach_name, training):
     
     return data_transform
 
+#Returns batch size based on model
 def get_batch_size(approach_name):
     if (approach_name == "CNN0"):
         batch_size = 64
@@ -178,6 +185,7 @@ def get_batch_size(approach_name):
     
     return batch_size
 
+#Creates and returns model
 def create_model (approach_name, class_cnt):
     if (approach_name == "CNN0"):
         model = CNN0(class_cnt)
@@ -189,6 +197,7 @@ def create_model (approach_name, class_cnt):
         model = CNN3(class_cnt)
     return model
 
+#Trains the model
 def train_model (approach_name, model, device, train_dataloader, test_dataloader):
     size = len(train_dataloader.dataset)
     model.train()

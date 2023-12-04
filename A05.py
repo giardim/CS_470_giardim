@@ -72,14 +72,14 @@ class CNN2(nn.Module):
         self.CNN2 = nn.Sequential(
             nn.Linear(32, 3, True),
             nn.ReLU(),
-            nn.Linear(3, 64, True),
+            nn.Conv2d(32, 64, 3, padding="same"),
             nn.ReLU(),
             nn.Linear(64, 64, True),
             nn.ReLU(),
             
             nn.Linear(64, 64, True),
             nn.ReLU(),
-            nn.Linear(64, 64, True),
+            nn.Conv2d(64, 64, 3, padding="same"),
             nn.ReLU(),
             nn.Linear(64, 64, True),
             
@@ -87,7 +87,7 @@ class CNN2(nn.Module):
             
             nn.Linear(64, 64, True),
             nn.ReLU(),
-            nn.Linear(64, 64, True),
+            nn.Conv2d(32, 64, 3, padding="same"),
             nn.ReLU(),
             nn.Linear(64, 64, True),
             
@@ -152,23 +152,22 @@ def get_approach_description(approach_name):
 def get_data_transform(approach_name, training):
     if (not training or approach_name == "CNN0" or approach_name == "CNN3"):
         data_transform = v2.Compose([
-        v2.ToImageTensor(),
-        v2.ConvertDtype()
+        v2.ToImage(),
+        v2.ToDtype(torch.float32, scale=True)
         ])
     #Data is randomly flipped horizontally
     elif (approach_name == "CNN1"):
         data_transform = v2.Compose([
-        v2.ToImageTensor(),
-        v2.ConvertDtype(),
-        v2.RandomHorizontalFlip()
-        ])   
+        v2.ToImage(),
+        v2.ToDtype(torch.float32, scale=True),
+        v2.RandomHorizontalFlip()])   
     #Data is randomly flipped vertically
     elif (approach_name == "CNN2"):
         data_transform = v2.Compose([
-        v2.ToImageTensor(),
-        v2.ConvertDtype(),
-        v2.RandomVerticalFlip()
-        ])
+        v2.ToImage(),
+        v2.ToDtype(torch.float32, scale=True),
+        v2.RandomVerticalFlip()]) 
+        
     
     return data_transform
 
@@ -202,16 +201,14 @@ def train_model (approach_name, model, device, train_dataloader, test_dataloader
     size = len(train_dataloader.dataset)
     model.train()
     
-    epoch = 10
-    
+    epoch = 10   
+    loss_fn = nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
     for i in range (epoch):
         print(f"===== EPOCH {i + 1} =====")
         for _, (X,y) in enumerate(train_dataloader):
             X = X.to(device)
             y = y.to(device)
-
-            loss_fn = nn.CrossEntropyLoss()
-            optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 
             pred = model(X)
             loss = loss_fn(pred, y)

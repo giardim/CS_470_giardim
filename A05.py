@@ -74,8 +74,8 @@ def get_approach_names():
 #Returns the description of all layers, used in our evaluation
 def get_approach_description(approach_name):
     desc = {
-        "CNN0" : f"A model with convolutional layers that go up to size 64 and a padding of 'same'. There is also a pooling layer of stride 2. This model uses the leaky RElU activation function. While training, this model also randomly flips images horizontally.",
-        "CNN1" : "A model with convolutional layers that go up to size 128 and a padding of 'same'. There is also a pooling layer of stride 1. This model uses the RElU activation function and has 2 dropout layers with 15% probability. While training, this model also randomly flips images vertically.",
+        "CNN0" : "A model with convolutional layers that go up to size 64 and a padding of 'same'. There is also a pooling layer of stride 2. This model uses the leaky RElU activation function. While training, this model also randomly flips images horizontally.",
+        "CNN1" : "A model with convolutional layers that go up to size 128 and a padding of 'same'. There is also a pooling layer of stride 1. This model uses the RElU activation function and has 2 dropout layers with 5% probability. While training, this model also randomly flips images vertically.",
     }
     
     return desc[approach_name]

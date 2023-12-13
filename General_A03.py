@@ -193,9 +193,9 @@ def predict_dataset(dataset, prefix, out_dir, cell_type, find_cell_func):
         draw_bounding_boxes(image, true_bounding_boxes, (0,0,0))
         draw_bounding_boxes(image, pred_bounding_boxes, (0,255,0))
 
-        #Show images (DEBUG)                
-        # cv2.imshow("IMAGE", image)        
-        # cv2.waitKey(-1)
+        # Show images (DEBUG)                
+        #cv2.imshow("IMAGE", image)        
+        #cv2.waitKey(-1)
 
         # Save image
         cv2.imwrite(out_dir + "/%s_%03d.png" % (prefix, image_index), image)
@@ -228,10 +228,17 @@ def predict_dataset(dataset, prefix, out_dir, cell_type, find_cell_func):
 # PRINTS METRICS (to STDOUT or file)
 ###############################################################################
 def print_metrics(train_metrics, test_metrics, stream=sys.stdout):
+    out_str = ""
     print("TRAINING:", file=stream)
     for key in train_metrics:
         print("\t", key, "=", train_metrics[key], file=stream)
+        out_str += str(train_metrics[key]) + "\t"
   
     print("TESTING:", file=stream)
     for key in test_metrics:
         print("\t", key, "=", test_metrics[key], file=stream)
+        out_str += str(test_metrics[key]) + "\t"
+
+    print("", file=stream)
+    print(out_str, file=stream)
+
